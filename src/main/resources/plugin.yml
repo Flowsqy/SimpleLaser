@@ -4,3 +4,8 @@ version: ${project.version}
 main: fr.flowsqy.simplelaser.SimpleLaserPlugin
 depend:
   - Reflect
+commands: 
+  laser:
+    description: Create a laser
+    usage: /laser <startX> <startY> <startZ> <endX> <endY> <endZ> <duration> <distance>
+    permission: simplelaser.command

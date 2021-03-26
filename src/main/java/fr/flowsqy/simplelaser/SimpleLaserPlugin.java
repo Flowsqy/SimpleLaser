@@ -6,6 +6,6 @@ public class SimpleLaserPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // TODO
+        getCommand("laser").setExecutor(new LaserCommand(this));
     }
 }
