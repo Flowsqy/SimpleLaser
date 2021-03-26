@@ -1,0 +1,4 @@
+name: SimpleLaser
+author: Flowsqy
+version: ${project.version}
+main: fr.flowsqy.simplelaser.SimpleLaserPlugin
