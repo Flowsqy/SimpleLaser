@@ -13,6 +13,7 @@ public class Laser {
 
     private final static int SQUID_ID;
     private final static int GUARDIAN_ID;
+    private final static byte INVISIBLE_VALUE;
 
     private final static AtomicInteger entityCount;
     private final static Constructor<?> dataWatcherConstructor;
@@ -22,6 +23,7 @@ public class Laser {
 
     private final static Constructor<?> packetSpawnEntityLivingConstructor;
     private final static Constructor<?> packetMetaDataConstructor;
+    private final static Constructor<?> packetEntityDestroyConstructor;
 
     private final static Field idField;
     private final static Field uuidField;
@@ -44,6 +46,7 @@ public class Laser {
         // Constants set (For 1.16.5)
         SQUID_ID = 81;
         GUARDIAN_ID = 31;
+        INVISIBLE_VALUE = 0b100000; // 2^5 == invisible (=32)
         final String entityCountFieldName = "entityCount";
         final String registerDataWatcherMethodName = "register";
         final String dataSharedFlagsIdFieldName = "S";
@@ -56,6 +59,7 @@ public class Laser {
         final Class<?> dataWatcherObjectClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "DataWatcherObject");
         final Class<?> packetSpawnEntityLivingClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "PacketPlayOutSpawnEntityLiving");
         final Class<?> packetMetaDataClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "PacketPlayOutEntityMetadata");
+        final Class<?> packetEntityDestroyClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "PacketPlayOutEntityDestroy");
 
         // Entity id counter
 
@@ -141,6 +145,12 @@ public class Laser {
 
         packetMetaDataConstructor.setAccessible(true);
 
+        // Destroy Entity
+
+        packetEntityDestroyConstructor = Reflect.getConstructor(packetEntityDestroyClass, int[].class);
+
+        packetEntityDestroyConstructor.setAccessible(true);
+
         // Send packets stuff
 
         final Class<?> craftPlayerClass = Reflect.getClass(Reflect.Commons.CRAFTBUKKIT + "entity.CraftPlayer");
@@ -178,13 +188,13 @@ public class Laser {
 
     private static Object getSquidMetaDataPacket(int id){
         final Object dataWatcher = Reflect.newInstance(dataWatcherConstructor, new Object[]{null});
-        Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataSharedFlagsId, (byte) 0b100000); // 2^5 == invisible (=32)
+        Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataSharedFlagsId, INVISIBLE_VALUE);
         return Reflect.newInstance(packetMetaDataConstructor, id, dataWatcher, true);
     }
 
     private static Object getGuardianMetaDataPacket(int id, int squidId){
         final Object dataWatcher = Reflect.newInstance(dataWatcherConstructor, new Object[]{null});
-        Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataSharedFlagsId, (byte) 0b100000); // 2^5 == invisible (=32)
+        Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataSharedFlagsId, INVISIBLE_VALUE);
         Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataIdAttackTarget, squidId);
         return Reflect.newInstance(packetMetaDataConstructor, id, dataWatcher, true);
     }
