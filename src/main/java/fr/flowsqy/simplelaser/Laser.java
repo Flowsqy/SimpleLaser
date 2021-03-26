@@ -91,6 +91,21 @@ public class Laser {
 
         packetSpawnEntityLivingConstructor = Reflect.getConstructor(packetSpawnEntityLivingClass);
 
+        /*
+        int a;       id
+        UUID b;      uuid
+        int c;       type
+        double d;    x
+        double e;    y
+        double f;    z
+        int g;       xd
+        int h;       yd
+        int i;       zd
+        byte j;      yRot
+        byte k;      xRot
+        byte l;      yHeadRot
+        */
+        
         idField = Reflect.getField(packetSpawnEntityLivingClass, "a");
         uuidField = Reflect.getField(packetSpawnEntityLivingClass, "b");
         typeField = Reflect.getField(packetSpawnEntityLivingClass, "c");
