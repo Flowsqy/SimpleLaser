@@ -1,10 +1,12 @@
 package fr.flowsqy.simplelaser;
 
 import fr.flo504.reflect.Reflect;
+import org.bukkit.Location;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Laser {
@@ -140,5 +142,36 @@ public class Laser {
         sendPacketMethod.setAccessible(true);
     }
 
+    private static Object getSpawnPacket(int id, Location location, int type){
+        final Object packet = Reflect.newInstance(packetSpawnEntityLivingConstructor);
+
+        Reflect.set(idField, packet, id);
+        Reflect.set(uuidField, packet, UUID.randomUUID());
+        Reflect.set(typeField, packet, type);
+        Reflect.set(xField, packet, location.getX());
+        Reflect.set(yField, packet, location.getY());
+        Reflect.set(zField, packet, location.getZ());
+        Reflect.set(xdField, packet, 0);
+        Reflect.set(ydField, packet, 0);
+        Reflect.set(zdField, packet, 0);
+        Reflect.set(yRotField, packet, (byte) (location.getYaw() * 256.0F / 360.0F));
+        Reflect.set(xRotField, packet, (byte) (location.getPitch() * 256.0F / 360.0F));
+        Reflect.set(yHeadRotField, packet, 0);
+
+        return packet;
+    }
+
+    private static Object getSquidMetaDataPacket(int id){
+        final Object dataWatcher = Reflect.newInstance(dataWatcherConstructor, new Object[]{null});
+        Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataSharedFlagsId, (byte) 0b100000); // 2^5 == invisible (=32)
+        return Reflect.newInstance(packetMetaDataConstructor, id, dataWatcher, true);
+    }
+
+    private static Object getGuardianMetaDataPacket(int id, int squidId){
+        final Object dataWatcher = Reflect.newInstance(dataWatcherConstructor, new Object[]{null});
+        Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataSharedFlagsId, (byte) 0b100000); // 2^5 == invisible (=32)
+        Reflect.invoke(registerDataWatcherMethod, dataWatcher, dataIdAttackTarget, squidId);
+        return Reflect.newInstance(packetMetaDataConstructor, id, dataWatcher, true);
+    }
     
 }
