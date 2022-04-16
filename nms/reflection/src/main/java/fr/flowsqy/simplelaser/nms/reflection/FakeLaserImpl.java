@@ -1,22 +1,12 @@
-package fr.flowsqy.simplelaser;
+package fr.flowsqy.simplelaser.nms.reflection;
 
-import fr.flo504.reflect.Reflect;
-import org.apache.commons.lang.Validate;
+import fr.flowsqy.simplelaser.nms.FakeLaser;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+public class FakeLaserImpl implements FakeLaser {
 
-public class Laser {
-
+    /*
     private final static int SQUID_ID;
     private final static int GUARDIAN_ID;
     private final static byte INVISIBLE_VALUE;
@@ -115,19 +105,19 @@ public class Laser {
         byte k;      xRot
         byte l;      yHeadRot
         */
-        
-        idField = Reflect.getField(packetSpawnEntityLivingClass, "a");
-        uuidField = Reflect.getField(packetSpawnEntityLivingClass, "b");
-        typeField = Reflect.getField(packetSpawnEntityLivingClass, "c");
-        xField = Reflect.getField(packetSpawnEntityLivingClass, "d");
-        yField = Reflect.getField(packetSpawnEntityLivingClass, "e");
-        zField = Reflect.getField(packetSpawnEntityLivingClass, "f");
-        xdField = Reflect.getField(packetSpawnEntityLivingClass, "g");
-        ydField = Reflect.getField(packetSpawnEntityLivingClass, "h");
-        zdField = Reflect.getField(packetSpawnEntityLivingClass, "i");
-        yRotField = Reflect.getField(packetSpawnEntityLivingClass, "j");
-        xRotField = Reflect.getField(packetSpawnEntityLivingClass, "k");
-        yHeadRotField = Reflect.getField(packetSpawnEntityLivingClass, "l");
+/*
+    idField = Reflect.getField(packetSpawnEntityLivingClass, "a");
+    uuidField = Reflect.getField(packetSpawnEntityLivingClass, "b");
+    typeField = Reflect.getField(packetSpawnEntityLivingClass, "c");
+    xField = Reflect.getField(packetSpawnEntityLivingClass, "d");
+    yField = Reflect.getField(packetSpawnEntityLivingClass, "e");
+    zField = Reflect.getField(packetSpawnEntityLivingClass, "f");
+    xdField = Reflect.getField(packetSpawnEntityLivingClass, "g");
+    ydField = Reflect.getField(packetSpawnEntityLivingClass, "h");
+    zdField = Reflect.getField(packetSpawnEntityLivingClass, "i");
+    yRotField = Reflect.getField(packetSpawnEntityLivingClass, "j");
+    xRotField = Reflect.getField(packetSpawnEntityLivingClass, "k");
+    yHeadRotField = Reflect.getField(packetSpawnEntityLivingClass, "l");
 
 
         packetSpawnEntityLivingConstructor.setAccessible(true);
@@ -145,33 +135,33 @@ public class Laser {
         xRotField.setAccessible(true);
         yHeadRotField.setAccessible(true);
 
-        // MetaData
+    // MetaData
 
-        packetMetaDataConstructor = Reflect.getConstructor(packetMetaDataClass, int.class, dataWatcherClass, boolean.class);
+    packetMetaDataConstructor = Reflect.getConstructor(packetMetaDataClass, int.class, dataWatcherClass, boolean.class);
 
         packetMetaDataConstructor.setAccessible(true);
 
-        // Destroy Entity
+    // Destroy Entity
 
-        packetEntityDestroyConstructor = Reflect.getConstructor(packetEntityDestroyClass, int[].class);
+    packetEntityDestroyConstructor = Reflect.getConstructor(packetEntityDestroyClass, int[].class);
 
         packetEntityDestroyConstructor.setAccessible(true);
 
-        // Send packets stuff
+    // Send packets stuff
 
-        final Class<?> craftPlayerClass = Reflect.getClass(Reflect.Commons.CRAFTBUKKIT + "entity.CraftPlayer");
-        final Class<?> entityPlayerClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "EntityPlayer");
-        final Class<?> playerConnectionClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "PlayerConnection");
-        final Class<?> packetClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "Packet");
+    final Class<?> craftPlayerClass = Reflect.getClass(Reflect.Commons.CRAFTBUKKIT + "entity.CraftPlayer");
+    final Class<?> entityPlayerClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "EntityPlayer");
+    final Class<?> playerConnectionClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "PlayerConnection");
+    final Class<?> packetClass = Reflect.getClass(Reflect.Commons.MINECRAFT + "Packet");
 
-        getHandleMethod = Reflect.getMethod(craftPlayerClass, "getHandle");
-        playerConnectionField = Reflect.getField(entityPlayerClass, "playerConnection");
-        sendPacketMethod = Reflect.getMethod(playerConnectionClass, "sendPacket", packetClass);
+    getHandleMethod = Reflect.getMethod(craftPlayerClass, "getHandle");
+    playerConnectionField = Reflect.getField(entityPlayerClass, "playerConnection");
+    sendPacketMethod = Reflect.getMethod(playerConnectionClass, "sendPacket", packetClass);
 
         getHandleMethod.setAccessible(true);
         playerConnectionField.setAccessible(true);
         sendPacketMethod.setAccessible(true);
-    }
+}
 
     private static Object getSpawnPacket(int id, Location location, int type){
         final Object packet = Reflect.newInstance(packetSpawnEntityLivingConstructor);
@@ -217,109 +207,19 @@ public class Laser {
         Reflect.invoke(sendPacketMethod, playerConnection, packet);
     }
 
-    private final int duration;
-    private final int distanceSquared;
-    private final Location start;
-    private final Location end;
-
-    private final Object createSquidPacket;
-    private final Object createGuardianPacket;
-    private final Object metaDataSquidPacket;
-    private final Object metaDataGuardianPacket;
-    private final Object destroyPacket;
-
-    private BukkitRunnable runnable;
-
-    /*
-     * Inspired by the API <a href="https://www.spigotmc.org/resources/guardianbeamapi.18329">GuardianBeamAPI</a></br>
-     * @see <a href="https://github.com/SkytAsul/GuardianBeam">GitHub page</a>
-     * @author SkytAsul (for the task management)
      */
 
-    /**
-     * Create a Laser instance
-     * @param start Location where laser will starts
-     * @param end Location where laser will ends
-     * @param duration Duration of laser in seconds (<i>-1 if infinite</i>)
-     * @param distance Distance where laser will be visible
-     */
-    public Laser(Location start, Location end, int duration, int distance) {
-        this.start = start;
-        this.end = end;
-        this.duration = duration;
-        distanceSquared = distance * distance;
-
-        final int squid = entityCount.incrementAndGet();
-        final int guardian = entityCount.incrementAndGet();
-        createSquidPacket = getSpawnPacket(squid, end, SQUID_ID);
-        createGuardianPacket = getSpawnPacket(guardian, start, GUARDIAN_ID);
-        metaDataSquidPacket = getSquidMetaDataPacket(squid);
-        metaDataGuardianPacket = getGuardianMetaDataPacket(guardian, squid);
-
-        destroyPacket = getDestroyEntityPacket(squid, guardian);
+    public FakeLaserImpl() {
+        throw new RuntimeException("Not implemented yet");
     }
 
-    public void start(Plugin plugin){
-        Validate.isTrue(runnable == null, "Task already started");
-        runnable = new BukkitRunnable() {
-            int time = duration;
-            final Set<Player> show = new HashSet<>();
-            @Override
-            public void run() {
-                try {
-                    if (time == 0){
-                        cancel();
-                        return;
-                    }
-                    for (Player p : start.getWorld().getPlayers()){
-                        if (isCloseEnough(p.getLocation())){
-                            if (!show.contains(p)){
-                                sendStartPackets(p);
-                                show.add(p);
-                            }
-                        }else if (show.contains(p)){
-                            sendPacket(getPlayerConnection(p), destroyPacket);
-                            show.remove(p);
-                        }
-                    }
-                    if (time != -1) time--;
-                }catch (ReflectiveOperationException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public synchronized void cancel() throws IllegalStateException {
-                super.cancel();
-                for (Player p : show){
-                    sendPacket(getPlayerConnection(p), destroyPacket);
-                }
-                runnable = null;
-            }
-        };
-        runnable.runTaskTimer(plugin, 0L, 20L);
+    @Override
+    public void create(Iterable<Player> viewer, Location start, Location end) {
+        throw new RuntimeException("Not implemented yet");
     }
 
-    public void stop(){
-        Validate.isTrue(runnable != null, "Task not started");
-        runnable.cancel();
+    @Override
+    public void remove(Iterable<Player> viewer) {
+        throw new RuntimeException("Not implemented yet");
     }
-
-    public boolean isStarted(){
-        return runnable != null;
-    }
-
-    private void sendStartPackets(Player p) throws ReflectiveOperationException{
-        final Object playerConnection = getPlayerConnection(p);
-        sendPacket(playerConnection, createSquidPacket);
-        sendPacket(playerConnection, metaDataSquidPacket);
-        sendPacket(playerConnection, createGuardianPacket);
-        sendPacket(playerConnection, metaDataGuardianPacket);
-    }
-
-    private boolean isCloseEnough(Location location) {
-        return start.distanceSquared(location) <= distanceSquared ||
-                end.distanceSquared(location) <= distanceSquared;
-    }
-
 }

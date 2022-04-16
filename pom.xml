@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.flowsqy.simplelaser</groupId>
-    <artifactId>simplelaser</artifactId>
-    <version>1.0.0</version>
+    <artifactId>simplelaser-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.1.0-SNAPSHOT</version>
+    <modules>
+        <module>plugin</module>
+        <module>nms/interface</module>
+        <module>nms/reflection</module>
+        <module>nms/v1_17_1_R1</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <buildName>SimpleLaser</buildName>
+        <!-- Default Spigot version for nms implementation. Must be overridden  -->
+        <spigot.version>defaultVersion</spigot.version>
     </properties>
 
     <repositories>
@@ -22,41 +32,127 @@
         </repository>
     </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>fr.flo504</groupId>
-            <artifactId>reflect</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spigot API -->
+            <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>1.18.2-R0.1-SNAPSHOT</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Spigot -->
+            <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot</artifactId>
+                <version>${spigot.version}</version>
+                <classifier>remapped-mojang</classifier>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Internal shaded dependencies -->
+            <dependency>
+                <groupId>fr.flowsqy.simplelaser</groupId>
+                <artifactId>simplelaser-nms</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.flowsqy.simplelaser</groupId>
+                <artifactId>simplelaser-nms-interface</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.flowsqy.simplelaser</groupId>
+                <artifactId>simplelaser-nms-reflection</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.flowsqy.simplelaser</groupId>
+                <artifactId>simplelaser-nms-v1_17_1_R1</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>*.yml</include>
-                </includes>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.4</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                        <finalName>${buildName}-${project.version}</finalName>
+                        <filters>
+                            <filter>
+                                <artifact>fr.flowsqy.simplelaser:simplelaser-plugin</artifact>
+                                <excludeDefaults>false</excludeDefaults>
+                                <includes>
+                                    <include>META-INF/**</include>
+                                    <include>META-INF/**/*</include>
+                                    <include>**/module-info.class</include>
+                                </includes>
+                            </filter>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>META-INF/**</exclude>
+                                    <exclude>META-INF/**/*</exclude>
+                                    <exclude>**/module-info.class</exclude>
+                                </excludes>
+                            </filter>
+                        </filters>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>specialsource-maven-plugin</artifactId>
+                    <version>1.2.4</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>remap</goal>
+                            </goals>
+                            <id>remap-obf</id>
+                            <configuration>
+                                <srgIn>org.spigotmc:minecraft-server:${spigot.version}:txt:maps-mojang</srgIn>
+                                <reverse>true</reverse>
+                                <remappedDependencies>org.spigotmc:spigot:${spigot.version}:jar:remapped-mojang
+                                </remappedDependencies>
+                                <remappedArtifactAttached>true</remappedArtifactAttached>
+                                <remappedClassifierName>remapped-obf</remappedClassifierName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>remap</goal>
+                            </goals>
+                            <id>remap-spigot</id>
+                            <configuration>
+                                <inputFile>
+                                    ${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar
+                                </inputFile>
+                                <srgIn>org.spigotmc:minecraft-server:${spigot.version}:csrg:maps-spigot</srgIn>
+                                <remappedDependencies>org.spigotmc:spigot:${spigot.version}:jar:remapped-obf
+                                </remappedDependencies>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>
