@@ -32,6 +32,7 @@ public class PlatformLoader {
 
     private Platform getPlatform(String mappingsVersion) {
         return switch (mappingsVersion) {
+            case "acd6e6c27e5a0a9440afba70a96c27c9" -> new fr.flowsqy.simplelaser.nms.v1_17_R1.PlatformImpl();
             case "f0e3dfc7390de285a4693518dd5bd126" -> new fr.flowsqy.simplelaser.nms.v1_17_1_R1.PlatformImpl();
             default -> null;
         };

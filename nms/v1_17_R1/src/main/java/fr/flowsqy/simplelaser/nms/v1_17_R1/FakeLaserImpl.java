@@ -1,9 +1,9 @@
-package fr.flowsqy.simplelaser.nms.v1_17_1_R1;
+package fr.flowsqy.simplelaser.nms.v1_17_R1;
 
 import fr.flowsqy.simplelaser.nms.FakeLaser;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -127,8 +127,8 @@ public class FakeLaserImpl implements FakeLaser {
 
     @Override
     public void remove(Iterable<Player> viewer) {
-        final ClientboundRemoveEntitiesPacket removePacket = new ClientboundRemoveEntitiesPacket(squidId, guardianId);
-        sendPacket(viewer, removePacket);
+        final ClientboundRemoveEntityPacket removeSquidPacket = new ClientboundRemoveEntityPacket(squidId), removeGuardianPacket = new ClientboundRemoveEntityPacket(guardianId);
+        sendPacket(viewer, removeSquidPacket, removeGuardianPacket);
     }
 
     private void sendPacket(Iterable<Player> receivers, Packet<?>... packets) {
