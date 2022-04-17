@@ -31,6 +31,10 @@ public class LaserCommand implements TabExecutor {
             return true;
         }
 
+        if (args.length != 8) {
+            return false;
+        }
+
         final double startX, startY, startZ, endX, endY, endZ;
         final int duration, distance;
 
@@ -48,6 +52,7 @@ public class LaserCommand implements TabExecutor {
             sender.sendMessage(e.getMessage());
             return true;
         }
+
         final Location start = new Location(world, startX, startY, startZ);
         final Location end = new Location(world, endX, endY, endZ);
 
