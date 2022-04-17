@@ -15,6 +15,7 @@
         <module>nms/v1_17_R1</module>
         <module>nms/v1_17_1_R1</module>
         <module>nms/v1_18_R1</module>
+        <module>nms/v1_18_R2</module>
     </modules>
 
     <properties>
@@ -77,6 +78,11 @@
             <dependency>
                 <groupId>fr.flowsqy.simplelaser</groupId>
                 <artifactId>simplelaser-nms-v1_18_R1</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.flowsqy.simplelaser</groupId>
+                <artifactId>simplelaser-nms-v1_18_R2</artifactId>
                 <version>1.0.0</version>
             </dependency>
         </dependencies>
