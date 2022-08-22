@@ -40,6 +40,10 @@
             <groupId>fr.flowsqy.simplelaser</groupId>
             <artifactId>simplelaser-nms-v1_18_R2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fr.flowsqy.simplelaser</groupId>
+            <artifactId>simplelaser-nms-v1_19_R1</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

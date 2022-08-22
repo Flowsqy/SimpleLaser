@@ -1,7 +1,6 @@
 package fr.flowsqy.simplelaser;
 
 import fr.flowsqy.simplelaser.nms.FakeLaser;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -38,7 +37,9 @@ public class Laser {
     }
 
     public void start(Plugin plugin) {
-        Validate.isTrue(runnable == null, "Task already started");
+        if(runnable == null) {
+            throw new IllegalStateException("Task already started");
+        }
         runnable = new BukkitRunnable() {
             final Set<Player> show = new HashSet<>();
             int time = duration;
@@ -84,7 +85,9 @@ public class Laser {
     }
 
     public void stop() {
-        Validate.isTrue(runnable != null, "Task not started");
+        if(runnable == null) {
+            throw new IllegalStateException("Task not started");
+        }
         runnable.cancel();
     }
 
