@@ -75,7 +75,7 @@ public class Laser {
                     fakeLaser.remove(removeList);
                 }
 
-                if (time <= 0) {
+                if (time == 0) {
                     cancel();
                     return;
                 }
