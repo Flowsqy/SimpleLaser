@@ -35,8 +35,8 @@ public class LaserCommand implements TabExecutor {
             return false;
         }
 
-        final double startX, startY, startZ, endX, endY, endZ;
-        final int duration, distance;
+        final double startX, startY, startZ, endX, endY, endZ, duration;
+        final int distance;
 
         try {
             startX = getDouble(args[0]);
@@ -46,7 +46,7 @@ public class LaserCommand implements TabExecutor {
             endY = getDouble(args[4]);
             endZ = getDouble(args[5]);
 
-            duration = getInt(args[6]);
+            duration = getDouble(args[6]);
             distance = getInt(args[7]);
         } catch (RuntimeException e) {
             sender.sendMessage(e.getMessage());
@@ -56,7 +56,11 @@ public class LaserCommand implements TabExecutor {
         final Location start = new Location(world, startX, startY, startZ);
         final Location end = new Location(world, endX, endY, endZ);
 
-        new Laser(plugin, start, end, duration, distance).start(plugin);
+        final int intDuration = (int) duration;
+        final int laserDuration = intDuration < 0 ? -1 : intDuration;
+        final int addedTicks = (int) ((duration - intDuration) * 20);
+
+        new Laser(plugin, start, end, laserDuration, addedTicks, distance).start(plugin);
 
         sender.sendMessage("Successfully summoned the laser");
         return true;
