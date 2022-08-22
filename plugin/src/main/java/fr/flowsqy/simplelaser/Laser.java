@@ -56,10 +56,6 @@ public class Laser {
 
             @Override
             public void run() {
-                if (time <= 0) {
-                    cancel();
-                    return;
-                }
                 final List<Player> createList = new LinkedList<>(), removeList = new LinkedList<>();
                 for (Player p : Objects.requireNonNull(start.getWorld()).getPlayers()) {
                     if (isCloseEnough(p.getLocation())) {
@@ -77,6 +73,11 @@ public class Laser {
 
                 if (!removeList.isEmpty()) {
                     fakeLaser.remove(removeList);
+                }
+
+                if (time <= 0) {
+                    cancel();
+                    return;
                 }
 
                 time--;
