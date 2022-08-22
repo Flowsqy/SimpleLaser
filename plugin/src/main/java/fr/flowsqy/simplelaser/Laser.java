@@ -47,7 +47,7 @@ public class Laser {
     }
 
     public void start(Plugin plugin) {
-        if (runnable == null) {
+        if (runnable != null) {
             throw new IllegalStateException("Task already started");
         }
         runnable = new BukkitRunnable() {
