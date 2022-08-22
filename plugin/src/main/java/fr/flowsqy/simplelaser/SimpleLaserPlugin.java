@@ -24,6 +24,11 @@ public class SimpleLaserPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("laser")).setExecutor(new LaserCommand(this));
     }
 
+    @Override
+    public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this);
+    }
+
     public Platform getPlatform() {
         return platform;
     }
