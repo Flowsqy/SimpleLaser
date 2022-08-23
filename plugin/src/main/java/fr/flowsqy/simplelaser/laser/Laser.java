@@ -29,8 +29,8 @@ public class Laser {
         final FakeGuardian fakeGuardian = platform.createGuardian();
         final FakeSquid fakeSquid = platform.createSquid();
         final Set<Player> viewers = new HashSet<>();
-        this.start = new LaserPoint(plugin, Objects.requireNonNull(start), fakeGuardian, viewers);
-        this.end = new LaserPoint(plugin, Objects.requireNonNull(end), fakeSquid, viewers);
+        this.start = new LaserPoint(Objects.requireNonNull(start), fakeGuardian, viewers);
+        this.end = new LaserPoint(Objects.requireNonNull(end), fakeSquid, viewers);
         viewerChecker = new ViewerChecker(world, this.start.getPosition(), this.end.getPosition(), distance, fakeGuardian, fakeSquid, viewers);
         this.duration = duration;
     }
@@ -40,20 +40,18 @@ public class Laser {
             throw new IllegalStateException("Task already started");
         }
 
-        task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 0L, 20L);
+        task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 0L, 1L);
     }
 
     private void tick() {
-        viewerChecker.tick();
+        if (duration.isSecond()) {
+            viewerChecker.tick();
+        }
         start.tick();
         end.tick();
 
         if (duration.getDuration() == 1) {
-            if (duration.getAddedTicks() == 0) {
-                cancel();
-            } else {
-                Bukkit.getScheduler().runTaskLater(plugin, this::cancel, duration.getAddedTicks());
-            }
+            cancel();
         }
         if (duration.getDuration() > 0) {
             duration.decrementDuration();

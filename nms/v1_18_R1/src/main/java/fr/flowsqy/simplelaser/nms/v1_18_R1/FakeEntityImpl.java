@@ -131,15 +131,6 @@ public abstract class FakeEntityImpl implements FakeEntity {
     }
 
     @Override
-    public void move(Vector delta) {
-        final ClientboundSetEntityMotionPacket setMotionPacket = new ClientboundSetEntityMotionPacket(
-                entityId,
-                new Vec3(delta.getX(), delta.getY(), delta.getZ())
-        );
-        queuePacket(setMotionPacket);
-    }
-
-    @Override
     public void teleport(Vector position) {
         final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         buffer.writeVarInt(entityId);

@@ -22,11 +22,6 @@ public abstract class FakeEntityImpl implements FakeEntity {
     }
 
     @Override
-    public void move(Vector delta) {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    @Override
     public void teleport(Vector position) {
         throw new RuntimeException("Not implemented yet");
     }

@@ -11,8 +11,6 @@ public interface FakeEntity {
 
     void remove();
 
-    void move(Vector delta);
-
     void teleport(Vector position);
 
 }
