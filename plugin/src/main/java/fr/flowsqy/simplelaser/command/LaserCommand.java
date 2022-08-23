@@ -60,7 +60,8 @@ public class LaserCommand implements TabExecutor {
         final Vector start, end, startMovementPos, endMovementPos;
 
         final int distance;
-        final double duration, startMovementDuration, endMovementDuration;
+        final double laserDuration;
+        final Double startMovementDuration, endMovementDuration;
         try {
             parsedArgs = argumentParser.parse(0, args);
             start = ((Vector) Objects.requireNonNull(parsedArgs.get("s"), "'-s' argument is required"));
@@ -68,22 +69,25 @@ public class LaserCommand implements TabExecutor {
 
             distance = (int) Objects.requireNonNull(parsedArgs.get("d"), "'-d' argument is required");
 
-            duration = (double) Objects.requireNonNull(parsedArgs.get("t"), "'-t' argument is required");
+            laserDuration = (double) Objects.requireNonNull(parsedArgs.get("t"), "'-t' argument is required");
 
             startMovementPos = (Vector) parsedArgs.get("sm");
             endMovementPos = (Vector) parsedArgs.get("em");
 
-            startMovementDuration = (double) parsedArgs.get("st");
-            endMovementDuration = (double) parsedArgs.get("et");
+            startMovementDuration = (Double) parsedArgs.get("st");
+            endMovementDuration = (Double) parsedArgs.get("et");
         } catch (RuntimeException e) {
             sender.sendMessage(e.getMessage());
             return true;
         }
 
-        final LaserPointData startData = new LaserPointData(start, startMovementPos, new Duration(startMovementDuration));
-        final LaserPointData endData = new LaserPointData(end, endMovementPos, new Duration(endMovementDuration));
+        final Duration startMovementDurationData = startMovementDuration == null ? null : new Duration(startMovementDuration);
+        final Duration endMovementDurationData = endMovementDuration == null ? null : new Duration(endMovementDuration);
 
-        new Laser(plugin, world, startData, endData, new Duration(duration), distance).start();
+        final LaserPointData startData = new LaserPointData(start, startMovementPos, startMovementDurationData);
+        final LaserPointData endData = new LaserPointData(end, endMovementPos, endMovementDurationData);
+
+        new Laser(plugin, world, startData, endData, new Duration(laserDuration), distance).start();
 
         sender.sendMessage("Successfully summoned the laser");
         return true;
