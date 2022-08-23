@@ -8,30 +8,63 @@
     <artifactId>simplelaser-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.1.3</version>
+
     <modules>
         <module>plugin</module>
-        <module>nms/interface</module>
-        <module>nms/reflection</module>
-        <module>nms/v1_17_R1</module>
-        <module>nms/v1_17_R2</module>
-        <module>nms/v1_18_R1</module>
-        <module>nms/v1_18_R2</module>
-        <module>nms/v1_19_R1</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>build-nms</id>
+            <activation>
+                <property>
+                    <name>buildNMS</name>
+                </property>
+            </activation>
+            <modules>
+                <module>nms</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>import-nms</id>
+            <activation>
+                <property>
+                    <name>!buildNMS</name>
+                </property>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Packages</name>
+                    <url>https://maven.pkg.github.com/Flowsqy/SimpleLaser</url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Flowsqy/SimpleLaser</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Avoid the deployment of all artifact  -->
+        <maven.deploy.skip>true</maven.deploy.skip>
         <buildName>SimpleLaser</buildName>
-        <!-- Default Spigot version for nms implementation. Must be overridden  -->
-        <spigot.version>defaultVersion</spigot.version>
     </properties>
 
     <repositories>
         <repository>
-            <id>spigot</id>
+            <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
@@ -58,37 +91,7 @@
             <!-- Internal shaded dependencies -->
             <dependency>
                 <groupId>fr.flowsqy.simplelaser</groupId>
-                <artifactId>simplelaser-nms-interface</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.flowsqy.simplelaser</groupId>
-                <artifactId>simplelaser-nms-reflection</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.flowsqy.simplelaser</groupId>
-                <artifactId>simplelaser-nms-v1_17_R1</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.flowsqy.simplelaser</groupId>
-                <artifactId>simplelaser-nms-v1_17_R2</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.flowsqy.simplelaser</groupId>
-                <artifactId>simplelaser-nms-v1_18_R1</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.flowsqy.simplelaser</groupId>
-                <artifactId>simplelaser-nms-v1_18_R2</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.flowsqy.simplelaser</groupId>
-                <artifactId>simplelaser-nms-v1_19_R1</artifactId>
+                <artifactId>simplelaser-nms-all</artifactId>
                 <version>1.0.0</version>
             </dependency>
         </dependencies>
@@ -100,7 +103,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.4</version>
+                    <version>3.3.0</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -137,38 +140,20 @@
                     <groupId>net.md-5</groupId>
                     <artifactId>specialsource-maven-plugin</artifactId>
                     <version>1.2.4</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>remap</goal>
-                            </goals>
-                            <id>remap-obf</id>
-                            <configuration>
-                                <srgIn>org.spigotmc:minecraft-server:${spigot.version}:txt:maps-mojang</srgIn>
-                                <reverse>true</reverse>
-                                <remappedDependencies>org.spigotmc:spigot:${spigot.version}:jar:remapped-mojang
-                                </remappedDependencies>
-                                <remappedArtifactAttached>true</remappedArtifactAttached>
-                                <remappedClassifierName>remapped-obf</remappedClassifierName>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>remap</goal>
-                            </goals>
-                            <id>remap-spigot</id>
-                            <configuration>
-                                <inputFile>
-                                    ${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar
-                                </inputFile>
-                                <srgIn>org.spigotmc:minecraft-server:${spigot.version}:csrg:maps-spigot</srgIn>
-                                <remappedDependencies>org.spigotmc:spigot:${spigot.version}:jar:remapped-obf
-                                </remappedDependencies>
-                            </configuration>
-                        </execution>
-                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

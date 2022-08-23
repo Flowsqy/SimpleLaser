@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>simplelaser-parent</artifactId>
+        <artifactId>simplelaser-nms</artifactId>
         <groupId>fr.flowsqy.simplelaser</groupId>
-        <version>1.1.3</version>
-        <relativePath>../../pom.xml</relativePath>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,8 +13,6 @@
     <version>1.0.0</version>
 
     <properties>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
         <spigot.version>1.17-R0.1-SNAPSHOT</spigot.version>
     </properties>
 
