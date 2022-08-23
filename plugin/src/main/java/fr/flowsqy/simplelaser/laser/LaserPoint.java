@@ -32,7 +32,7 @@ public class LaserPoint {
     }
 
     private Vector calculateDelta(Vector endPosition) {
-        if (duration == null || duration.getDuration() < 0 || endPosition == null || origin.equals(endPosition)) {
+        if (duration == null || duration.getTotalTicks() <= 0 || endPosition == null || origin.equals(endPosition)) {
             return ZERO;
         }
         final int totalTicks = duration.getTotalTicks();
