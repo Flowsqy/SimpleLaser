@@ -81,7 +81,9 @@ public class LaserPoint {
 
     public void reset() {
         finished = false;
-        duration.reset();
+        if(duration != null) {
+            duration.reset();
+        }
         position.copy(origin);
     }
 

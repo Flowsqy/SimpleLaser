@@ -32,10 +32,6 @@ public class Duration {
         return addedTicks;
     }
 
-    public double getTotalDuration() {
-        return addedTicks * 0.05 + duration;
-    }
-
     public int getTotalTicks() {
         return duration * 20 + addedTicks;
     }
