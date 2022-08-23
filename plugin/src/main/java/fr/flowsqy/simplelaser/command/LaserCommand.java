@@ -1,12 +1,13 @@
 package fr.flowsqy.simplelaser.command;
 
-import fr.flowsqy.simplelaser.Laser;
 import fr.flowsqy.simplelaser.SimpleLaserPlugin;
 import fr.flowsqy.simplelaser.command.parser.ArgumentParser;
 import fr.flowsqy.simplelaser.command.parser.DoubleArgument;
 import fr.flowsqy.simplelaser.command.parser.IntArgument;
 import fr.flowsqy.simplelaser.command.parser.PositionArgument;
-import org.bukkit.Location;
+import fr.flowsqy.simplelaser.laser.Duration;
+import fr.flowsqy.simplelaser.laser.Laser;
+import fr.flowsqy.simplelaser.laser.LaserPointData;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
@@ -35,7 +36,11 @@ public class LaserCommand implements TabExecutor {
                 new PositionArgument("s"),
                 new PositionArgument("e"),
                 new IntArgument("d"),
-                new DoubleArgument("t")
+                new DoubleArgument("t"),
+                new PositionArgument("sm"),
+                new PositionArgument("em"),
+                new DoubleArgument("st"),
+                new DoubleArgument("et")
         );
     }
 
@@ -52,27 +57,33 @@ public class LaserCommand implements TabExecutor {
         }
 
         final Map<String, Object> parsedArgs;
-        final Location start, end;
+        final Vector start, end, startMovementPos, endMovementPos;
+
         final int distance;
-        final double duration;
+        final double duration, startMovementDuration, endMovementDuration;
         try {
             parsedArgs = argumentParser.parse(0, args);
-            start = ((Vector) Objects.requireNonNull(parsedArgs.get("s"), "'-s' argument is required")).toLocation(world);
-            end = ((Vector) Objects.requireNonNull(parsedArgs.get("e"), "'-e' argument is required")).toLocation(world);
+            start = ((Vector) Objects.requireNonNull(parsedArgs.get("s"), "'-s' argument is required"));
+            end = ((Vector) Objects.requireNonNull(parsedArgs.get("e"), "'-e' argument is required"));
 
             distance = (int) Objects.requireNonNull(parsedArgs.get("d"), "'-d' argument is required");
 
             duration = (double) Objects.requireNonNull(parsedArgs.get("t"), "'-t' argument is required");
+
+            startMovementPos = (Vector) parsedArgs.get("sm");
+            endMovementPos = (Vector) parsedArgs.get("em");
+
+            startMovementDuration = (double) parsedArgs.get("st");
+            endMovementDuration = (double) parsedArgs.get("et");
         } catch (RuntimeException e) {
             sender.sendMessage(e.getMessage());
             return true;
         }
 
-        final int intDuration = (int) duration;
-        final int laserDuration = intDuration < 0 ? -1 : intDuration;
-        final int addedTicks = (int) ((duration - intDuration) * 20);
+        final LaserPointData startData = new LaserPointData(start, startMovementPos, new Duration(startMovementDuration));
+        final LaserPointData endData = new LaserPointData(end, endMovementPos, new Duration(endMovementDuration));
 
-        new Laser(plugin, start, end, laserDuration, addedTicks, distance).start(plugin);
+        new Laser(plugin, world, startData, endData, new Duration(duration), distance).start();
 
         sender.sendMessage("Successfully summoned the laser");
         return true;

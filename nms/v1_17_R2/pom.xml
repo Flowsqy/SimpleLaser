@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>simplelaser-nms-v1_17_1_R1</artifactId>
+    <artifactId>simplelaser-nms-v1_17_R2</artifactId>
     <version>1.0.0</version>
 
     <properties>

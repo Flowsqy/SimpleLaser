@@ -1,4 +1,4 @@
-package fr.flowsqy.simplelaser.nms.v1_18_R1;
+package fr.flowsqy.simplelaser.nms.v1_17_R2;
 
 import fr.flowsqy.simplelaser.nms.FakeGuardian;
 import fr.flowsqy.simplelaser.nms.FakeSquid;
