@@ -1,5 +1,6 @@
 package fr.flowsqy.simplelaser;
 
+import fr.flowsqy.simplelaser.command.LaserCommand;
 import fr.flowsqy.simplelaser.nms.Platform;
 import fr.flowsqy.simplelaser.nms.PlatformLoader;
 import org.bukkit.Bukkit;

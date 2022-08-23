@@ -7,7 +7,7 @@
     <groupId>fr.flowsqy.simplelaser</groupId>
     <artifactId>simplelaser-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <modules>
         <module>plugin</module>
         <module>nms/interface</module>

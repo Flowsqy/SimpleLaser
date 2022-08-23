@@ -1,5 +1,11 @@
-package fr.flowsqy.simplelaser;
+package fr.flowsqy.simplelaser.command;
 
+import fr.flowsqy.simplelaser.Laser;
+import fr.flowsqy.simplelaser.SimpleLaserPlugin;
+import fr.flowsqy.simplelaser.command.parser.ArgumentParser;
+import fr.flowsqy.simplelaser.command.parser.DoubleArgument;
+import fr.flowsqy.simplelaser.command.parser.IntArgument;
+import fr.flowsqy.simplelaser.command.parser.PositionArgument;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
@@ -7,16 +13,30 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class LaserCommand implements TabExecutor {
 
     private final SimpleLaserPlugin plugin;
+    private final ArgumentParser argumentParser;
 
     public LaserCommand(SimpleLaserPlugin plugin) {
         this.plugin = plugin;
+        this.argumentParser = createArgumentParser();
+    }
+
+    private ArgumentParser createArgumentParser() {
+        return new ArgumentParser(
+                new PositionArgument("s"),
+                new PositionArgument("e"),
+                new IntArgument("d"),
+                new DoubleArgument("t")
+        );
     }
 
     @Override
@@ -31,30 +51,22 @@ public class LaserCommand implements TabExecutor {
             return true;
         }
 
-        if (args.length != 8) {
-            return false;
-        }
-
-        final double startX, startY, startZ, endX, endY, endZ, duration;
+        final Map<String, Object> parsedArgs;
+        final Location start, end;
         final int distance;
-
+        final double duration;
         try {
-            startX = getDouble(args[0]);
-            startY = getDouble(args[1]);
-            startZ = getDouble(args[2]);
-            endX = getDouble(args[3]);
-            endY = getDouble(args[4]);
-            endZ = getDouble(args[5]);
+            parsedArgs = argumentParser.parse(0, args);
+            start = ((Vector) Objects.requireNonNull(parsedArgs.get("s"), "'-s' argument is required")).toLocation(world);
+            end = ((Vector) Objects.requireNonNull(parsedArgs.get("e"), "'-e' argument is required")).toLocation(world);
 
-            duration = getDouble(args[6]);
-            distance = getInt(args[7]);
+            distance = (int) Objects.requireNonNull(parsedArgs.get("d"), "'-d' argument is required");
+
+            duration = (double) Objects.requireNonNull(parsedArgs.get("t"), "'-t' argument is required");
         } catch (RuntimeException e) {
             sender.sendMessage(e.getMessage());
             return true;
         }
-
-        final Location start = new Location(world, startX, startY, startZ);
-        final Location end = new Location(world, endX, endY, endZ);
 
         final int intDuration = (int) duration;
         final int laserDuration = intDuration < 0 ? -1 : intDuration;
@@ -64,22 +76,6 @@ public class LaserCommand implements TabExecutor {
 
         sender.sendMessage("Successfully summoned the laser");
         return true;
-    }
-
-    private double getDouble(String arg) {
-        try {
-            return Double.parseDouble(arg);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("'" + arg + "' is not a decimal number !");
-        }
-    }
-
-    private int getInt(String arg) {
-        try {
-            return Integer.parseInt(arg);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("'" + arg + "' is not an integer !");
-        }
     }
 
     @Override
