@@ -16,6 +16,8 @@ Arguments are : (Schema : 'argument-name' - description - argument type)
 - '-t' - duration of the laser in seconds (-1 for infinite duration) - decimal number
 
 Optional arguments are:
+- '-sm' - the final position of the start point of the laser - position
+- '-st' - duration of the movement of the start position - decimal number
 - '-em' - the final position of the end point of the laser - position
 - '-et' - duration of the movement of the end position - decimal number
 
