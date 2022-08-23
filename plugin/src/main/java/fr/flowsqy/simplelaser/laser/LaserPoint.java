@@ -25,8 +25,8 @@ public class LaserPoint {
         this.plugin = plugin;
         this.origin = laserPointData.getStart().clone();
         this.position = origin.clone();
-        this.delta = calculateDelta(laserPointData.getEnd());
         this.duration = laserPointData.getDuration();
+        this.delta = calculateDelta(laserPointData.getEnd());
         this.fakeEntity = fakeEntity;
         this.viewers = viewers;
     }
