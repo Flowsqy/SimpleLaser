@@ -40,8 +40,11 @@ public class PlatformLoader {
                     new fr.flowsqy.simplelaser.nms.v1_18_R1.PlatformImpl();
             case "eaeedbff51b16ead3170906872fda334" -> // 1.18.2
                     new fr.flowsqy.simplelaser.nms.v1_18_R2.PlatformImpl();
-            case "7b9de0da1357e5b251eddde9aa762916", "4cc0cc97cac491651bff3af8b124a214", "69c84c88aeb92ce9fa9525438b93f4fe" -> // 1.19 ; 1.19.1 ; 1.19.2 (v1_19_R1)
+            case "7b9de0da1357e5b251eddde9aa762916", "4cc0cc97cac491651bff3af8b124a214",
+                 "69c84c88aeb92ce9fa9525438b93f4fe" -> // 1.19 ; 1.19.1 ; 1.19.2 (v1_19_R1)
                     new fr.flowsqy.simplelaser.nms.v1_19_R1.PlatformImpl();
+            case "3478a65bfd04b15b431fe107b3617dfc" -> //1.20.2
+                    new fr.flowsqy.simplelaser.nms.v1_20_R2.PlatformImpl();
             default -> null;
         };
     }
