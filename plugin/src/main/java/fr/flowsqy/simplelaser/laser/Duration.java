@@ -19,7 +19,7 @@ public class Duration {
     }
 
     public boolean isSecond() {
-        return duration % 20 == 0;
+        return (ticks - duration) % 20 == 0;
     }
 
     public void reset() {
