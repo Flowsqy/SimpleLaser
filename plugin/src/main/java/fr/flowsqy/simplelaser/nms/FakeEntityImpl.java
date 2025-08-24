@@ -10,18 +10,17 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundEntityPositionSyncPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class FakeEntityImpl implements FakeEntity {
@@ -122,17 +121,11 @@ public abstract class FakeEntityImpl implements FakeEntity {
 
     @Override
     public void teleport(Vector position) {
-        final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        buffer.writeVarInt(entityId);
-        buffer.writeDouble(position.getX());
-        buffer.writeDouble(position.getY());
-        buffer.writeDouble(position.getZ());
-        buffer.writeByte(0);
-        buffer.writeByte(0);
-        buffer.writeBoolean(false);
-        final ClientboundTeleportEntityPacket teleportEntityPacket = ClientboundTeleportEntityPacket.STREAM_CODEC
-                .decode(buffer);
-        queuePacket(teleportEntityPacket);
+        final Vec3 pos = new Vec3(position.getX(), position.getY(), position.getZ());
+        final PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, Vec3.ZERO, 0f, 0f);
+        final ClientboundEntityPositionSyncPacket positionPacket = new ClientboundEntityPositionSyncPacket(entityId,
+                positionMoveRotation, false);
+        queuePacket(positionPacket);
     }
 
     protected void queuePacket(Packet<?> packet) {
