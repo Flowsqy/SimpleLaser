@@ -1,6 +1,6 @@
 name: SimpleLaser
 author: Flowsqy
-version: ${project.version}
+version: ${version}
 main: fr.flowsqy.simplelaser.SimpleLaserPlugin
 api-version: "1.13"
 commands:
